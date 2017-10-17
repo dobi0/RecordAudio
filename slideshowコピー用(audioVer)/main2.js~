@@ -1,0 +1,55 @@
+var data_cp;
+var count = 0;
+var media;
+
+function slideSwitch() {
+    media = document.getElementById("mv");
+    getJson();
+    setTimeout( "slideSwitch()", 5000);
+}
+
+function slideInsert(){
+    document.getElementById('a1').src = data_cp[count].name;
+    var length = data_cp.length;
+
+    console.log(media.currentTime);
+    
+    for(var i = 0; i < length-1; i++) {
+	if(data_cp[i].time < media.currentTime && media.currentTime < data_cp[i+1].time){
+	    document.getElementById('a1').src = data_cp[i].name;
+	}
+    }
+}
+
+function getJson() {
+     //var xmlhttp = createXMLHttpRequest(); //旧バージョンのIEなどに対応する場合
+     var xmlhttp = new XMLHttpRequest();
+     xmlhttp.onreadystatechange = function () {
+       if (xmlhttp.readyState == 4) {
+         if (xmlhttp.status == 200) {
+           var data = JSON.parse(xmlhttp.responseText);
+           data_cp = data;
+           len = data.length;
+           slideInsert();
+          
+         } 
+       }
+ }
+ xmlhttp.open("GET", "data.json");
+ xmlhttp.send();
+
+function createXMLHttpRequest() {
+     if (window.XMLHttpRequest) { return new XMLHttpRequest() }
+     if (window.ActiveXObject) {
+       try { return new ActiveXObject("Msxml2.XMLHTTP.6.0") } catch (e) { }
+       try { return new ActiveXObject("Msxml2.XMLHTTP.3.0") } catch (e) { }
+       try { return new ActiveXObject("Microsoft.XMLHTTP") } catch (e) { }
+     }
+     return false;
+   }
+}
+
+$(function() {
+    setTimeout( "slideSwitch()", 0 );
+});
+
